@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_connectdbdemo/adduser.dart';
 import 'package:flutter_connectdbdemo/home.dart';
 import 'package:flutter_connectdbdemo/login.dart';
+import 'package:flutter_connectdbdemo/profilelogin.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
         '/register':(context) => const AddUser(),
         //'/update':(context) => const UpdateUser(),
         '/home':(context) => const Home(),
+        '/profile':(context) => const ProfileLogin(),
       },
     );
   }

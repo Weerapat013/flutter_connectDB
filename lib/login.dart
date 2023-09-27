@@ -17,7 +17,7 @@ class _LoginState extends State<Login> {
   TextEditingController password = TextEditingController();
 
   Future<void> checkLogin() async {
-    String urlSQL = "http://172.21.245.138/addressbook/checklogin.php";
+    String urlSQL = "http://172.21.234.3/addressbook/checklogin.php";
     final uri = Uri.parse(urlSQL);
     final response = await http.post(uri, body: {
       //'key_name': variable
@@ -25,35 +25,24 @@ class _LoginState extends State<Login> {
       'password': password.text,
     });
 
+    
     print(response.statusCode); //Debug
     if (response.statusCode == 200) {
       final json = response.body;
       final data = jsonDecode(json);
       print(data); //Debug
 
-      if (data == 'Completed') {
-        setState(
-          () {
-            Navigator.pushNamed(
-              context,
-              '/home',
-              arguments: {
-                'username': username.text,
-              },
-            );
-          },
-        );
-      } else {
-        Fluttertoast.showToast(
-          msg: "Please check Username or Password",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 20.0,
-        );
-      }
+      setState(
+        () {
+          Navigator.pushNamed(
+            context,
+            '/profile',
+            arguments: {
+              'username': username.text,
+            },
+          );
+        },
+      );
     }
   }
 

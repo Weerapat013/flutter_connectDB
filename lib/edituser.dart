@@ -1,32 +1,38 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 
-class AddUser extends StatefulWidget {
-  const AddUser({super.key});
+class EditUser extends StatefulWidget {
+  final List user;
+  final int index;
+
+  const EditUser({
+    Key? key,
+    required this.user,
+    required this.index,
+  }) : super(key: key);
 
   @override
-  State<AddUser> createState() => _AddUserState();
+  State<EditUser> createState() => _EditUserState();
 }
 
-class _AddUserState extends State<AddUser> {
+class _EditUserState extends State<EditUser> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController fullname = TextEditingController();
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
-  TextEditingController confirmPassword = TextEditingController();
 
-  Future<void> addUserData() async {
-    String urlSQL = "http://172.21.234.3/addressbook/insert.php";
+  Future<void> editUser() async {
+    String urlSQL = "http://172.21.234.3/addressbook/edit.php";
     final uri = Uri.parse(urlSQL);
     final response = await http.post(uri, body: {
       //'key_name': variable
       //'ชื่อ Key ที่ตรงกับในไฟล์ Insert': ชื่อตัวแปรที่เก็บค่าในจากกล่องข้อความ.text
+      'fullname': fullname.text,
       'username': username.text,
       'password': password.text,
-      'fullname': fullname.text,
     });
 
     print(response.statusCode); //Debug
@@ -40,13 +46,13 @@ class _AddUserState extends State<AddUser> {
           () {
             Navigator.pushNamed(
               context,
-              '/home',
+              '/profile',
             );
           },
         );
       } else {
         Fluttertoast.showToast(
-          msg: "Username already existed",
+          msg: "Something went wrong",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
@@ -59,10 +65,18 @@ class _AddUserState extends State<AddUser> {
   }
 
   @override
+  void initState() {
+    fullname.text = widget.user[widget.index]['fullname'];
+    username.text = widget.user[widget.index]['username'];
+    password.text = widget.user[widget.index]['password'];
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add User'),
+        title: Text('Edit User'),
       ),
       body: Center(
         child: Container(
@@ -73,7 +87,7 @@ class _AddUserState extends State<AddUser> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
-                  'Register Form',
+                  'Edit Form',
                   style: TextStyle(
                     color: Colors.blue,
                     fontSize: 50,
@@ -109,12 +123,7 @@ class _AddUserState extends State<AddUser> {
                 const SizedBox(height: 20),
                 TextFormField(
                   controller: username,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your Username';
-                    }
-                    return null;
-                  },
+                  readOnly: true,
                   decoration: InputDecoration(
                     hintText: "Username",
                     filled: true,
@@ -138,42 +147,12 @@ class _AddUserState extends State<AddUser> {
                   obscureText: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your Password';
+                      return 'Please enter your Fullname';
                     }
                     return null;
                   },
                   decoration: InputDecoration(
                     hintText: "Password",
-                    filled: true,
-                    fillColor: Colors.lightBlue[50],
-                    focusColor: Colors.blue,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.red,
-                      ),
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: confirmPassword,
-                  obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter Confirm your Password';
-                    }
-                    if (value != password.text) {
-                      return "Passwords don't match, Please check Password";
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    hintText: "Confirm Password",
                     filled: true,
                     fillColor: Colors.lightBlue[50],
                     focusColor: Colors.blue,
@@ -198,10 +177,12 @@ class _AddUserState extends State<AddUser> {
                       height: 50,
                       child: ElevatedButton(
                         onPressed: () {
-                          fullname.clear();
-                          username.clear();
-                          password.clear();
-                          confirmPassword.clear();
+                          setState(() {
+                            Navigator.pushNamed(
+                              context,
+                              '/profile',
+                            );
+                          });
                         },
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.blue,
@@ -229,7 +210,7 @@ class _AddUserState extends State<AddUser> {
                       child: ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            addUserData();
+                            editUser();
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -240,7 +221,7 @@ class _AddUserState extends State<AddUser> {
                           ),
                         ),
                         child: const Text(
-                          'Register',
+                          'Save',
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,

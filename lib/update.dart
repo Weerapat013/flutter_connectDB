@@ -26,7 +26,7 @@ class _UpdateUserState extends State<UpdateUser> {
   TextEditingController confirmPassword = TextEditingController();
 
   Future<void> editUser() async {
-    String urlSQL = "http://172.21.245.138/addressbook/edit.php";
+    String urlSQL = "http://172.21.234.3/addressbook/edit.php";
     final uri = Uri.parse(urlSQL);
     final response = await http.post(uri, body: {
       //'key_name': variable

@@ -22,7 +22,7 @@ class _HomeState extends State<Home> {
   }
 
   Future getData() async {
-    const url = "http://172.21.245.138/addressbook/select.php";
+    const url = "http://172.21.234.3/addressbook/select.php";
     final uri = Uri.parse(url);
     final response = await http.get(uri);
     //print(response.statusCode); //Debug
